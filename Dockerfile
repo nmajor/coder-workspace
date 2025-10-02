@@ -26,8 +26,6 @@ RUN apt-get update && apt-get install -y \
   autoconf \
   libssh-dev \
   unixodbc-dev \
-  libsctp-dev \
-  libxslt1-dev \
   zsh \
   && rm -rf /var/lib/apt/lists/*
 
