@@ -5,27 +5,16 @@ FROM codercom/enterprise-base:ubuntu
 # Other packages are build dependencies for Python, Node, Elixir, etc.
 RUN apt-get update && apt-get install -y \
   build-essential \
-  git \
+  ca-certificates \
   curl \
-  libssl-dev \
+  git \
+  pkg-config \
   zlib1g-dev \
-  libbz2-dev \
+  libssl-dev \
   libreadline-dev \
-  libsqlite3-dev \
-  wget \
-  llvm \
   libncurses5-dev \
-  m4 \
-  xz-utils \
-  tk-dev \
-  libxml2-dev \
-  libxmlsec1-dev \
-  libffi-dev \
-  liblzma-dev \
+  wget \
   unzip \
-  autoconf \
-  libssh-dev \
-  unixodbc-dev \
   zsh \
   && rm -rf /var/lib/apt/lists/*
 
