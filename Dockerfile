@@ -25,7 +25,7 @@ RUN apt-get update && apt-get install -y \
   unzip \
   autoconf \
   wx-common \
-  libwxgtk3.0-gtk3-dev \
+  'libwxgtk3.2-dev | libwxgtk3.0-gtk3-dev' \
   libgl1-mesa-dev \
   libglu1-mesa-dev \
   libpng-dev \
