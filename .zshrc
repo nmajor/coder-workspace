@@ -14,15 +14,12 @@ setopt CORRECT
 export STARSHIP_CONFIG="$HOME/.config/starship.toml"
 eval "$(starship init zsh)"
 
-# asdf
-if [ -f "$HOME/.asdf/asdf.sh" ]; then
-  . "$HOME/.asdf/asdf.sh"
-fi
-fpath=($HOME/.asdf/completions $fpath)
+# asdf (v0.16+)
+export ASDF_DIR="$HOME/.asdf"
 autoload -Uz compinit
 compinit
-if [ -f "$HOME/.asdf/completions/asdf.zsh" ]; then
-  . "$HOME/.asdf/completions/asdf.zsh"
+if command -v asdf >/dev/null 2>&1; then
+  source <(asdf completion zsh)
 fi
 
 # Set default directory to app folder (only if starting from home)
