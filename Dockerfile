@@ -24,18 +24,10 @@ RUN apt-get update && apt-get install -y \
   liblzma-dev \
   unzip \
   autoconf \
-  wx-common \
-  'libwxgtk3.2-dev | libwxgtk3.0-gtk3-dev' \
-  libgl1-mesa-dev \
-  libglu1-mesa-dev \
-  libpng-dev \
   libssh-dev \
   unixodbc-dev \
   libsctp-dev \
   libxslt1-dev \
-  xsltproc \
-  fop \
-  libxml2-utils \
   zsh \
   && rm -rf /var/lib/apt/lists/*
 
@@ -63,6 +55,8 @@ USER coder
 ENV HOME=/home/coder
 ENV ASDF_DIR=$HOME/.asdf
 ENV PATH="$ASDF_DIR/bin:$ASDF_DIR/shims:$PATH"
+ENV KERL_BUILD_DOCS=no
+ENV KERL_CONFIGURE_OPTIONS="--without-wx"
 WORKDIR $HOME
 
 # Make a directory for the app $HOME/app
