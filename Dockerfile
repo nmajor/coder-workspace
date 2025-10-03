@@ -40,15 +40,11 @@ RUN usermod -s /usr/bin/zsh coder
 # The rest of the Dockerfile should run as the 'coder' user
 USER coder
 ENV HOME=/home/coder
-ENV APP_DIR=$HOME/app
 ENV ASDF_DIR=$HOME/.asdf
 ENV PATH="$ASDF_DIR/bin:$ASDF_DIR/shims:$PATH"
 ENV KERL_BUILD_DOCS=no
 ENV KERL_CONFIGURE_OPTIONS="--without-wx"
 WORKDIR $HOME
-
-# Make a directory for the app $HOME/app
-RUN mkdir -p $APP_DIR
 
 # Install asdf v0.16+ (Go) pinned binary release (simple & deterministic)
 ENV ASDF_VERSION=v0.18.0
