@@ -37,10 +37,6 @@ RUN rm -rf /var/lib/apt/lists/*
 # Make zsh the default shell for the 'coder' user (non-interactive)
 RUN usermod -s /usr/bin/zsh coder
 
-# Provide a default zsh configuration for the 'coder' user
-COPY --chown=coder:coder .zshrc /home/coder/.zshrc
-COPY --chown=coder:coder starship.toml /home/coder/.config/starship.toml
-
 # The rest of the Dockerfile should run as the 'coder' user
 USER coder
 ENV HOME=/home/coder
@@ -108,6 +104,3 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 RUN npm install -g bun
 RUN npm install -g @anthropic-ai/claude-code
 
-# ----------------------
-
-COPY --chown=coder:coder .mcp.json $APP_DIR/.mcp.json
