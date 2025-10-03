@@ -37,14 +37,12 @@ RUN rm -rf /var/lib/apt/lists/*
 # Make zsh the default shell for the 'coder' user (non-interactive)
 RUN usermod -s /usr/bin/zsh coder
 
-# The rest of the Dockerfile should run as the 'coder' user
-USER coder
-ENV HOME=/home/coder
-ENV ASDF_DIR=$HOME/.asdf
-ENV PATH="$ASDF_DIR/bin:$ASDF_DIR/shims:$PATH"
+# System-wide asdf configuration (no $HOME dependency)
+ENV ASDF_DIR=/usr/local/asdf
+ENV ASDF_DATA_DIR=/var/lib/asdf
+ENV PATH="$ASDF_DIR/bin:$ASDF_DATA_DIR/shims:$PATH"
 ENV KERL_BUILD_DOCS=no
 ENV KERL_CONFIGURE_OPTIONS="--without-wx"
-WORKDIR $HOME
 
 # Install asdf v0.16+ (Go) pinned binary release (simple & deterministic)
 ENV ASDF_VERSION=v0.18.0
@@ -55,48 +53,44 @@ RUN ARCH=$(dpkg --print-architecture); \
     arm64) GOARCH=arm64 ;; \
     *) echo "Unsupported architecture: $ARCH" >&2; exit 1 ;; \
   esac; \
-  mkdir -p "$ASDF_DIR" && \
+  mkdir -p "$ASDF_DIR/bin" "$ASDF_DATA_DIR" /etc/profile.d && \
   curl -fsSL -o /tmp/asdf.tgz "https://github.com/asdf-vm/asdf/releases/download/${ASDF_VERSION}/asdf-${ASDF_VERSION}-linux-${GOARCH}.${ASDF_EXT}" && \
   tar -xaf /tmp/asdf.tgz -C "$ASDF_DIR" && \
-  mkdir -p "$ASDF_DIR/bin" && \
   if [ -x "$ASDF_DIR/asdf" ]; then install -m 0755 "$ASDF_DIR/asdf" "$ASDF_DIR/bin/asdf"; \
   elif [ -x "$ASDF_DIR/bin/asdf" ]; then true; \
   else BIN_PATH=$(find "$ASDF_DIR" -maxdepth 2 -type f -name asdf | head -n1); test -n "$BIN_PATH" && install -m 0755 "$BIN_PATH" "$ASDF_DIR/bin/asdf"; fi && \
   rm -f /tmp/asdf.tgz
 
-# Bash completion for asdf (v0.16+)
-RUN echo 'if command -v asdf >/dev/null 2>&1; then' >> $HOME/.bashrc
-RUN echo '  source <(asdf completion bash)' >> $HOME/.bashrc
-RUN echo 'fi' >> $HOME/.bashrc
+# Make asdf available for all shells via profile.d
+RUN printf '%s\n' \
+  'export ASDF_DIR=/usr/local/asdf' \
+  'export ASDF_DATA_DIR=/var/lib/asdf' \
+  'export PATH="$ASDF_DIR/bin:$ASDF_DATA_DIR/shims:$PATH"' \
+  '. "$ASDF_DIR/asdf.sh" 2>/dev/null || true' \
+  > /etc/profile.d/asdf.sh
 
-# Install languages
-ENV NODEJS_VERSION=20.11
-ENV PYTHON_VERSION=3.12
-ENV ELIXIR_VERSION=1.18
+# Install languages (system-wide into ASDF_DATA_DIR)
+ENV NODEJS_VERSION=24.8.0
+ENV PYTHON_VERSION=3.13.0
+ENV ELIXIR_VERSION=1.18.4
 ENV ERLANG_VERSION=28.1
 
-RUN asdf plugin add nodejs
-RUN asdf plugin add python
-RUN asdf plugin add elixir
-RUN asdf plugin add erlang
+RUN . /etc/profile.d/asdf.sh && \
+    asdf plugin add nodejs || true && \
+    asdf plugin add python || true && \
+    asdf plugin add elixir || true && \
+    asdf plugin add erlang || true && \
+    asdf install nodejs "$NODEJS_VERSION" && \
+    asdf install python "$PYTHON_VERSION" && \
+    asdf install elixir "$ELIXIR_VERSION" && \
+    asdf install erlang "$ERLANG_VERSION" && \
+    asdf reshim
 
-ENV TOOL_VERSIONS_FILE=$HOME/.tool-versions
+# System-wide default versions via environment (no $HOME, no shell init needed)
+ENV ASDF_NODEJS_VERSION=$NODEJS_VERSION
+ENV ASDF_PYTHON_VERSION=$PYTHON_VERSION
+ENV ASDF_ELIXIR_VERSION=$ELIXIR_VERSION
+ENV ASDF_ERLANG_VERSION=$ERLANG_VERSION
 
-RUN echo "nodejs 20.11.0" > "$TOOL_VERSIONS_FILE"
-RUN echo "python 3.12.2" >> "$TOOL_VERSIONS_FILE"
-RUN echo "elixir 1.18" >> "$TOOL_VERSIONS_FILE"
-RUN echo "erlang 28.1" >> "$TOOL_VERSIONS_FILE"
-
-RUN asdf install
-
-# ----------------------
-# Python stuff
-
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# ----------------------
-# Javascript stuff
-
-RUN npm install -g bun
-RUN npm install -g @anthropic-ai/claude-code
+USER coder
 
