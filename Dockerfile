@@ -98,13 +98,16 @@ RUN echo "erlang 28.1" >> "$TOOL_VERSIONS_FILE"
 RUN asdf install
 
 # ----------------------
+# Python stuff
 
-COPY --chown=coder:coder .default-mcp.json $APP_DIR/.mcp.json
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # ----------------------
-
-RUN npx -y playwright@latest install-deps
-RUN npx -y playwright@latest install chromium firefox webkit chrome
+# Javascript stuff
 
 RUN npm install -g bun
 RUN npm install -g @anthropic-ai/claude-code
+
+# ----------------------
+
+COPY --chown=coder:coder .mcp.json $APP_DIR/.mcp.json

@@ -27,6 +27,9 @@ if [ "$PWD" = "$HOME" ]; then
     cd ~/app
 fi
 
+# For UV Python
+export PATH="$HOME/.local/bin:$PATH"
+
 # Common aliases
 alias ll='ls -alF'
 alias la='ls -A'
