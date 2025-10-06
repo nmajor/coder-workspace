@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y \
   wget \
   unzip \
   zsh \
+  inotify-tools \
   && rm -rf /var/lib/apt/lists/*
 
 # Install Starship prompt (official script)
