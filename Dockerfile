@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y \
   zsh \
   inotify-tools \
   fzf \
+  tmux \
   && rm -rf /var/lib/apt/lists/*
 
 # Install Starship prompt (official script)
@@ -38,6 +39,12 @@ RUN rm -rf /var/lib/apt/lists/*
 
 # Make zsh the default shell for the 'coder' user (non-interactive)
 RUN usermod -s /usr/bin/zsh coder
+
+# Ensure tmux uses zsh (login) so .zshrc and Zim are always loaded
+RUN printf '%s\n' \
+  'set -g default-shell /usr/bin/zsh' \
+  'set -g default-command "/usr/bin/zsh -l"' \
+  > /etc/tmux.conf
 
 # Install Zimfw outside persisted home and prebuild modules
 ENV ZIM_HOME=/opt/zim
