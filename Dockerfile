@@ -51,10 +51,9 @@ RUN mkdir -p "$ZIM_HOME" && \
   'zmodule environment' \
   'zmodule git' \
   'zmodule input' \
-  'zmodule completion' \
-  'zmodule history' \
-  'zmodule utility' \
   'zmodule zsh-users/zsh-completions --fpath src' \
+  'zmodule completion' \
+  'zmodule utility' \
   'zmodule zsh-users/zsh-autosuggestions' \
   'zmodule zsh-users/zsh-history-substring-search' \
   'zmodule gusaiani/elixir-oh-my-zsh --name elixir --source elixir.plugin.zsh' \
