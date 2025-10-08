@@ -40,6 +40,12 @@ RUN rm -rf /var/lib/apt/lists/*
 # Make zsh the default shell for the 'coder' user (non-interactive)
 RUN usermod -s /usr/bin/zsh coder
 
+# Let Zim own completion: disable global compinit in system zshrc
+RUN if [ -f /etc/zsh/zshrc ]; then \
+  sed -i -E 's/^([[:space:]]*autoload[[:space:]]+-U[z]?\s+compinit.*)$/# \1/' /etc/zsh/zshrc || true; \
+  sed -i -E 's/^([[:space:]]*compinit( |$).*)$/# \1/' /etc/zsh/zshrc || true; \
+fi
+
 # Ensure tmux uses zsh (login) so .zshrc and Zim are always loaded
 RUN printf '%s\n' \
   'set -g default-shell /usr/bin/zsh' \
