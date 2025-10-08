@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y \
   unzip \
   zsh \
   inotify-tools \
+  fzf \
   && rm -rf /var/lib/apt/lists/*
 
 # Install Starship prompt (official script)
@@ -37,6 +38,31 @@ RUN rm -rf /var/lib/apt/lists/*
 
 # Make zsh the default shell for the 'coder' user (non-interactive)
 RUN usermod -s /usr/bin/zsh coder
+
+# Install Zimfw outside persisted home and prebuild modules
+ENV ZIM_HOME=/opt/zim
+ENV ZIM_CONFIG_FILE=/opt/zim/.zimrc
+
+# Install zimfw script and declare desired modules
+RUN mkdir -p "$ZIM_HOME" && \
+  curl -fsSL --create-dirs -o "$ZIM_HOME/zimfw.zsh" \
+    https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh && \
+  printf '%s\n' \
+  'zmodule environment' \
+  'zmodule git' \
+  'zmodule input' \
+  'zmodule completion' \
+  'zmodule history' \
+  'zmodule utility' \
+  'zmodule zsh-users/zsh-completions --fpath src' \
+  'zmodule zsh-users/zsh-autosuggestions' \
+  'zmodule zsh-users/zsh-history-substring-search' \
+  'zmodule gusaiani/elixir-oh-my-zsh --name elixir --source elixir.plugin.zsh' \
+  'zmodule Aloxaf/fzf-tab' \
+  'zmodule zsh-users/zsh-syntax-highlighting' \
+  > "$ZIM_CONFIG_FILE" && \
+  ZDOTDIR=/root zsh -c 'source ${ZIM_HOME}/zimfw.zsh install && source ${ZIM_HOME}/zimfw.zsh init -q' && \
+  chown -R coder:coder "$ZIM_HOME"
 
 # System-wide asdf configuration (no $HOME dependency)
 ENV ASDF_DIR=/usr/local/asdf
