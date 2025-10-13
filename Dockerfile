@@ -27,6 +27,9 @@ RUN apt-get update && apt-get install -y \
   tmux \
   && rm -rf /var/lib/apt/lists/*
 
+RUN echo 'fs.inotify.max_user_watches=524288' | sudo tee -a /etc/sysctl.conf && \
+  sudo sysctl -p
+
 # Install Starship prompt (official script)
 RUN curl -fsSL https://starship.rs/install.sh | sh -s -- -y
 
