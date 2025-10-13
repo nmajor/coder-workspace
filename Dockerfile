@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y \
   unzip \
   zsh \
   inotify-tools \
+  watchman \
   fzf \
   tmux \
   && rm -rf /var/lib/apt/lists/*
