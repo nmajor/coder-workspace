@@ -25,6 +25,7 @@ RUN apt-get update && apt-get install -y \
   watchman \
   fzf \
   tmux \
+  imagemagick \
   && rm -rf /var/lib/apt/lists/*
 
 RUN echo 'fs.inotify.max_user_watches=524288' | sudo tee -a /etc/sysctl.conf && \
