@@ -137,3 +137,5 @@ ENV ASDF_ELIXIR_VERSION=$ELIXIR_VERSION
 ENV ASDF_ERLANG_VERSION=$ERLANG_VERSION
 
 RUN chown -R coder:coder /var/lib/asdf
+
+RUN curl -fsSL https://tailscale.com/install.sh | sh
